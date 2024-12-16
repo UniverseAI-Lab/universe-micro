@@ -79,4 +79,9 @@ const nextConfig = {
   // This is required to support PostHog trailing slash API requests
   skipTrailingSlashRedirect: true,
 };
-module.exports = nextConfig;
+// next.config.js
+module.exports = {
+  experimental: {
+    serverActions: true, // Enable Server Actions feature
+  },
+};
