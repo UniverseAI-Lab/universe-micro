@@ -1,22 +1,16 @@
 import { useEffect } from "react";
-
 import { useAIState } from "ai/rsc";
-
 import getLocationFromCoordinates from "@/server/get-location-from-coordinates";
+import getLocationFromIP from "@/server/get-location-from-ip"; // New function to fetch location via IP
 
 export default function useLocation() {
   const [aiState, setAIState] = useAIState();
 
   useEffect(() => {
+    // Check if geolocation is supported
     if (!navigator.geolocation) {
       console.log("Geolocation is not supported by your browser.");
-      setAIState({
-        ...aiState,
-        location: {
-          coordinates: null,
-          isLoaded: true,
-        },
-      });
+      fetchDefaultLocation();
       return;
     }
 
@@ -27,41 +21,29 @@ export default function useLocation() {
     const success = async (position: GeolocationPosition) => {
       const latitude = position.coords.latitude;
       const longitude = position.coords.longitude;
-      const response = await getLocationFromCoordinates({
-        latitude: latitude,
-        longitude: longitude,
-      });
-      const result = await response;
-      if ("location" in result) {
-        const locationName = result.location;
-        const countryCode = result.countryCode;
-        const location = {
-          isLoaded: true,
-          locationName: locationName,
-          countryCode: countryCode,
-          coordinates: {
-            latitude: latitude,
-            longitude: longitude,
-          },
-        };
-
-        setAIState({
-          ...aiState,
-          location: location,
+      try {
+        const response = await getLocationFromCoordinates({
+          latitude,
+          longitude,
         });
-      } else {
-        console.error("Error fetching location: ", result.error);
-        setAIState({
-          ...aiState,
-          location: {
-            coordinates: null,
-            isLoaded: true,
-          },
-        });
-        return;
+        if ("location" in response) {
+          setAIState({
+            ...aiState,
+            location: {
+              isLoaded: true,
+              locationName: response.location,
+              countryCode: response.countryCode,
+              coordinates: { latitude, longitude },
+            },
+          });
+        } else {
+          console.error("Error fetching location: ", response.error);
+          fetchDefaultLocation(); // Fallback to IP location
+        }
+      } catch (error) {
+        console.error("Error processing geolocation:", error);
+        fetchDefaultLocation(); // Fallback to IP location
       }
-
-      clearTimeout(timerId);
     };
 
     const handleError = (error: GeolocationPositionError) => {
@@ -80,42 +62,66 @@ export default function useLocation() {
           errorMessage = "An unknown error occurred.";
           break;
       }
-      console.error(errorMessage);
-      setAIState({
-        ...aiState,
-        location: {
-          ...aiState.location,
-          isLoaded: true,
-        },
-      });
-      clearTimeout(timerId);
+      console.log(errorMessage);
+      fetchDefaultLocation(); // Fallback to IP location
     };
 
-    const watchId = navigator.geolocation.getCurrentPosition(
-      success,
-      handleError,
-      options,
-    );
+    // Request geolocation
+    navigator.geolocation.getCurrentPosition(success, handleError, options);
 
-    // Set a timeout to handle the case where the user does not make a selection.
+    // Fallback to IP-based location if no geolocation is provided within a timeout
     const timerId = setTimeout(() => {
-      if (watchId !== undefined) {
-        navigator.geolocation.clearWatch(watchId);
-      }
       if (!aiState.location.isLoaded) {
-        console.log("No response from user.");
+        console.log("Geolocation timeout, switching to IP-based location.");
+        fetchDefaultLocation();
+      }
+    }, 5000);
+
+    return () => clearTimeout(timerId); // Clear timeout on cleanup
+  }, []);
+
+  // Fetch default location based on IP
+  const fetchDefaultLocation = async () => {
+    try {
+      const response = await getLocationFromIP();
+      if (response && "location" in response) {
         setAIState({
           ...aiState,
           location: {
-            ...aiState.location,
             isLoaded: true,
+            locationName: response.location,
+            countryCode: response.countryCode,
+            coordinates: {
+              latitude: response.latitude,
+              longitude: response.longitude,
+            },
+          },
+        });
+      } else {
+        console.error("Error fetching IP-based location:", response.error);
+        setAIState({
+          ...aiState,
+          location: {
+            isLoaded: true,
+            locationName: "Unknown",
+            countryCode: "US", // Fallback country code
+            coordinates: { latitude: 0, longitude: 0 }, // Default coordinates
           },
         });
       }
-    }, 5000); // Timeout after 5 seconds
-
-    return () => clearTimeout(timerId); // Clear the timeout if the component is unmounted.
-  }, []);
+    } catch (error) {
+      console.error("Error fetching location by IP:", error);
+      setAIState({
+        ...aiState,
+        location: {
+          isLoaded: true,
+          locationName: "Unknown",
+          countryCode: "US",
+          coordinates: { latitude: 0, longitude: 0 },
+        },
+      });
+    }
+  };
 
   return {
     location: aiState.location.coordinates,
