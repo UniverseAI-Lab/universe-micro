@@ -31,7 +31,6 @@ export type ClientMessage = {
   display?: React.ReactNode;
   spinner?: React.ReactNode;
   file?: PutBlobResult;
-  model: string;
 };
 
 export type UIState = ClientMessage[];
@@ -45,7 +44,7 @@ export const AI = createAI<AIState, UIState>({
     getCurrentWeatherUI,
   },
   initialAIState: {
-    currentModelVariable: "gpt-4o-mini",
+    currentModelVariable: "gemini-1.5-pro-latest ",
     isFinished: true,
     messages: [],
     location: {
