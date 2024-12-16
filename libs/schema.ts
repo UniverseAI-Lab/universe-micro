@@ -62,6 +62,16 @@ export const freshnessOptionsSchema = z.enum([
 
 export type FreshnessOptions = z.infer<typeof freshnessOptionsSchema>;
 
+ // New schema for IP-based location response
+export const locationFromIPSchema = z.object({
+  location: z.string().describe("The city and region based on IP location"),
+  countryCode: countryCodeSchema.describe("The country code based on IP location"),
+  latitude: z.number().describe("Latitude based on IP location"),
+  longitude: z.number().describe("Longitude based on IP location"),
+});
+
+export type LocationFromIP = z.infer<typeof locationFromIPSchema>;
+
 export const getCoordinatesFromLocationRequestSchema = z.object({
   location: z
     .string()
