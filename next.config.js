@@ -6,7 +6,7 @@ const path = require("path");
 //    serverActions: true, // Enable Server Actions feature
 //  },
 //};
-module.exports = {},
+module.exports = nextconfig;
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
