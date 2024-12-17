@@ -20,7 +20,6 @@ const MessageList: React.FC<MessageListProps> = ({
         display={message.display}
         spinner={message.spinner}
         file={message.file}
-        model={message.model}
       />
     ))}
     <div className="h-px w-full" ref={visibilityRef} />
