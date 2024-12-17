@@ -154,8 +154,8 @@ export default function ProviderImage({ provider }: ProviderImageProps) {
           fill="currentColor"
         />
       </svg>
-   
-  } else if (provider === "llama") {
+      );
+   } else if (provider === "llama") {
     return (
       <svg
         width="24"
