@@ -1,13 +1,12 @@
 const path = require("path");
 
 // next.config.js
-module.exports = {
-  experimental: {
-    serverActions: true, // Enable Server Actions feature
-    turboMode: true, // Enable TurboPack feature
-  },
-};
-
+//module.exports = {
+//experimental: {
+//    serverActions: true, // Enable Server Actions feature
+//  },
+//};
+module.exports = {},
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
