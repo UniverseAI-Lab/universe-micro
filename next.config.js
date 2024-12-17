@@ -1,12 +1,5 @@
 const path = require("path");
 
-// next.config.js
-//module.exports = {
-//experimental: {
-//    serverActions: true, // Enable Server Actions feature
-//  },
-//};
-module.exports = nextconfig;
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -86,3 +79,6 @@ const nextConfig = {
   // This is required to support PostHog trailing slash API requests
   skipTrailingSlashRedirect: true,
 };
+
+// Export the config
+module.exports = nextConfig;
