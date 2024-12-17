@@ -65,7 +65,6 @@ export default function Chat() {
             contentDisposition: fileUpload.contentDisposition || "",
           }
         : undefined,
-      //model: aiState.currentModelVariable,
     });
     const response = await continueConversation(message, fileUpload);
     // wait 300ms
