@@ -2,7 +2,9 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { PutBlobResult } from "@vercel/blob";
 import ProviderImage from "@/components/provider-image";
-import { Provider } from "../libs/models";
+
+// Based on provider-image.tsx implementation
+type Provider = "gemini" | "mistral" | "llama";
 
 interface MessageProps {
   id: string;
