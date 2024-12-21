@@ -1,9 +1,6 @@
-//import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-
 import { PutBlobResult } from "@vercel/blob";
-
 import ProviderImage from "@/components/provider-image";
 
 interface MessageProps {
@@ -23,7 +20,6 @@ export default function MessageCard({
   spinner,
   file,
 }: MessageProps) {
-
   return (
     <motion.div
       key={id}
@@ -31,10 +27,9 @@ export default function MessageCard({
     >
       <div className="flex flex-row items-center gap-4">
         {role !== "user" && (
-          <div className="flex h-9 w-9 shrink-0 select-none items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-950 dark:border-zinc-800 dark:bg-zinc-800 dark:text-zinc-50">
-            {/* Only render provider image if available */}
+          <div className="flex h-9 w-9 shrink-0 select-none items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-950 dark:border-zinc-800 dark:bg-zinc-800 dark:text-zinc-300">
             {file?.provider && (
-              <ProviderImage provider={file?.provider} />
+              <ProviderImage provider={file.provider} />
             )}
           </div>
         )}
@@ -44,7 +39,6 @@ export default function MessageCard({
       >
         {role !== "user" && (
           <h5 className="text-md pt-1 font-semibold text-zinc-950 dark:text-zinc-300">
-            {/* Display model label or something else if needed */}
             {file?.label?.toString() || 'No model selected'}
           </h5>
         )}
