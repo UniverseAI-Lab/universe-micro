@@ -2,6 +2,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { PutBlobResult } from "@vercel/blob";
 import ProviderImage from "@/components/provider-image";
+import { Provider } from "../libs/models";
 
 interface MessageProps {
   id: string;
@@ -9,7 +10,10 @@ interface MessageProps {
   content?: React.ReactNode;
   display?: React.ReactNode;
   spinner?: React.ReactNode;
-  file?: PutBlobResult;
+  file?: PutBlobResult & {
+    provider?: Provider;
+    label?: string;
+  };
 }
 
 export default function MessageCard({
